@@ -7,6 +7,23 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="748*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26*"/>
+            <RowDefinition Height="11*"/>
+            <RowDefinition Height="103*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="LightSalmon" Margin="0,0,-0.4,0.4" Grid.ColumnSpan="3">
+            <TextBlock Text="Bible Application" FontSize="45" Margin="150,0,0,-0.10"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Background="LightSkyBlue" Margin="0,78,-0.4,0.2" Grid.RowSpan="2" Grid.Column="1">
+            <ComboBox  Width="120"/>
+            <ComboBox Margin="55,0,0,-0.2" Width="120"/>
+            <ComboBox Margin="55,0,0,-0.2" Width="120"/>
+        </StackPanel>
     </Grid>
 </Window>
