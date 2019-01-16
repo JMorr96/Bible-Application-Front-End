@@ -13,26 +13,58 @@
             <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="78*"/>
-            <RowDefinition Height="33*"/>
-            <RowDefinition Height="284*"/>
-            <RowDefinition Height="24*"/>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="76*"/>
+            <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF1A618D" Margin="0,0,-0.4,0.4" Grid.ColumnSpan="3">
-            <TextBlock Text="Bible Application" FontSize="45" Margin="150,0,0,-0.10" Foreground="White"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF1A618D"  Grid.ColumnSpan="3">
+            <!--Logo and Header go here-->
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Background="#FF4D96C3" Margin="0.2,78,24.6,0.2" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2">
+        
+        
+        <TextBlock Text="Bible Application" FontSize="45"  Foreground="White" Grid.Column="1"/>
+        <StackPanel Orientation="Horizontal" Background="#FF4D96C3" Grid.Row="1" Grid.Column="1" MaxHeight="40"  >
             <ComboBox Name="cbBook" Text="Book" Width="120"/>
             <ComboBox Name="cbChapter" Text="Chapter" Margin="55,0,0,0" Width="120"/>
             <ComboBox Name="cbVerse" Text="Verse" Margin="55,0,0,0" Width="120"/>
             <Button Name="btnGo" Margin="55,0,0,0" Content="Go" Width=" 80" Click="btnGo_Click"></Button>
         </StackPanel>
-        <ScrollViewer Grid.Row="2" Grid.Column="1" Background="LightGray">
-            <StackPanel>
-                <TextBlock MinHeight="75" Background="Blue"></TextBlock>
-                <TextBlock MinHeight="75" Background="Red"></TextBlock>
-                <TextBlock MinHeight="75"></TextBlock>
-            </StackPanel>
+        
+        
+        <ScrollViewer Grid.Column="1" Background="LightGray" Grid.Row="2" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Margin="40,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Book"></TextBlock>
+                        <TextBlock Text="Chapter"></TextBlock>
+                    </StackPanel>
+                    <TextBlock  Background="Blue" HorizontalAlignment="Stretch" ></TextBlock>
+
+                </StackPanel>
+                <StackPanel Grid.Row="1" Margin="40,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Book"></TextBlock>
+                        <TextBlock Text="Chapter"></TextBlock>
+                    </StackPanel>
+                    <TextBlock  Background="Red" ></TextBlock>
+
+                </StackPanel>
+                <StackPanel Grid.Row="2" Margin="40,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Book"></TextBlock>
+                        <TextBlock Text="Chapter"></TextBlock>
+                    </StackPanel>
+                    <TextBlock  Background="Green" ></TextBlock>
+
+                </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Window>
