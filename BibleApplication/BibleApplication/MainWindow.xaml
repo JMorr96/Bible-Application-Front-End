@@ -20,11 +20,11 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF1A618D" Margin="0,0,-0.4,0.4" Grid.ColumnSpan="3">
             <TextBlock Text="Bible Application" FontSize="45" Margin="150,0,0,-0.10" Foreground="White"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Background="LightSkyBlue" Margin="0,78,-0.4,0.2" Grid.RowSpan="2" Grid.Column="1">
-            <ComboBox Text="Book" Width="120"/>
-            <ComboBox Text="Chapter" Margin="55,0,0,0" Width="120"/>
-            <ComboBox Text="Verse" Margin="55,0,0,0" Width="120"/>
-            <Button Margin="55,0,0,0" Content="Go" Width=" 80" ></Button>
+        <StackPanel Orientation="Horizontal" Background="#FF4D96C3" Margin="0,78,-0.4,0.2" Grid.RowSpan="2" Grid.Column="1">
+            <ComboBox Name="cbBook" Text="Book" Width="120"/>
+            <ComboBox Name="cbChapter" Text="Chapter" Margin="55,0,0,0" Width="120"/>
+            <ComboBox Name="cbVerse" Text="Verse" Margin="55,0,0,0" Width="120"/>
+            <Button Name="btnGo" Margin="55,0,0,0" Content="Go" Width=" 80" Click="btnGo_Click"></Button>
         </StackPanel>
     </Grid>
 </Window>

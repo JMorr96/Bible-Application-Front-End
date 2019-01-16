@@ -24,5 +24,9 @@ namespace BibleApplication
         {
             InitializeComponent();
         }
-       
-}
+
+        private void btnGo_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
