@@ -89,6 +89,9 @@
                 <Grid.Background>
                     <SolidColorBrush Color="#FF580D0D" Opacity="0.3"/>
                 </Grid.Background>
+                <TextBox HorizontalAlignment="Left" Height="53" Margin="66,30,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="518"/>
+                <TextBox HorizontalAlignment="Left" Height="69" Margin="66,111,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="518"/>
+                <TextBox HorizontalAlignment="Left" Height="77" Margin="66,202,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="518"/>
             </Grid>
         </StackPanel>
 
