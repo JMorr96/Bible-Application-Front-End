@@ -32,46 +32,9 @@ namespace BibleApplication
 
             InitializeComponent();
             this.DataContext = this;
-            List<string> testBooks = new List<string>(new string[] { "Genesis", "Exodus", "Leviticus" });
-            List<int> testChapters = new List<int>(new int[] { 1, 2, 3, 4, 5 });
-            List<int> testVerses = new List<int>(new int[] { 1, 2, 3, 4, 5,6,7,8,9 });
-            Books = testBooks;
-            Chapters = testChapters;
-            Verses = testVerses;
         }
         private List<int> verses;
 
-        public List<int> Verses
-        {
-            get { return verses; }
-            set { verses = value;
-                OnPropertyChanged("Verses");
-            }
-        }
-
-        private List<int> chapters;
-
-        public List<int> Chapters
-        {
-            get { return chapters; }
-            set
-            {
-                chapters = value;
-                OnPropertyChanged("Chapters");
-            }
-        }
-
-        private List<string> books;
-
-        public List<string> Books
-        {
-            get { return books; }
-            set
-            {
-                books = value;
-                OnPropertyChanged("Books");
-            }
-        }
 
         /// <summary>
         /// Sets the textblocks with the requested verses.
@@ -149,9 +112,37 @@ namespace BibleApplication
 
 
 
+
         #endregion
 
-      
+        private void grdmain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+
+
+                //check # of chapters in book
+                //if last chapter get next book
+                //back one chapter
+            }
+            if(e.Key == Key.Right)
+            {
+                // forward one chapter
+            }
+            if(e.Key == Key.Up)
+            {
+                // back one verse
+            }
+            if(e.Key == Key.Down)
+            {
+                //forward one verse
+            }
+            else
+            {
+
+            }
+
+        }
     }
     public class Verse
     {
