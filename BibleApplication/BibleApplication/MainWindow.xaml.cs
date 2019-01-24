@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ namespace BibleApplication
                         BooksDict.Add(item[0], item[1]);
                         list.Add(temp);
                     }
-                    
+
                     Books = list.Select(x => x.name).ToList();
                     cbBook.ItemsSource = Books;
                     cbBook.SelectedItem = Books.First();
@@ -89,9 +90,9 @@ namespace BibleApplication
                     var number = int.Parse(reader.ReadToEnd());
                     var numberList = Enumerable.Range(1, number).ToList();
 
-                    chapters = numberList;
-                    cbChapter.ItemsSource = chapters;
-                    cbChapter.SelectedItem = chapters.First();
+                    Chapters = numberList;
+                    cbChapter.ItemsSource = Chapters;
+                    cbChapter.SelectedItem = Chapters.First();
                 }
             }
             catch (WebException ex)
@@ -117,9 +118,9 @@ namespace BibleApplication
                     var number = int.Parse(reader.ReadToEnd());
                     var numberList = Enumerable.Range(1, number).ToList();
 
-                    verses = numberList;
-                    cbVerse.ItemsSource = verses;
-                    cbVerse.SelectedItem = verses.First();
+                    Verses = numberList;
+                    cbVerse.ItemsSource = Verses;
+                    cbVerse.SelectedItem = Verses.First();
 
                 }
             }
@@ -139,15 +140,39 @@ namespace BibleApplication
             //Chapters = testChapters;
             //Verses = testVerses;
         }
-        private List<int> verses;
+
+        private List<int> _verses;
 
         public List<int> Verses
         {
-            get { return verses; }
+            get { return _verses; }
             set
             {
-                verses = value;
-                OnPropertyChanged("Verses");
+                _verses = value;
+                OnPropertyChanged();
+            }
+        }
+        private List<int> _chapters;
+
+        public List<int> Chapters
+        {
+            get { return _chapters; }
+            set
+            {
+                _chapters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private List<string> _books;
+
+        public List<string> Books
+        {
+            get { return _books; }
+            set
+            {
+                _books = value;
+                OnPropertyChanged();
             }
         }
 
@@ -201,7 +226,7 @@ namespace BibleApplication
 
         }
         public bool setDefault { get; set; }
-    
+
         #region INotifyPropertyChanged Members
 
 
@@ -212,29 +237,35 @@ namespace BibleApplication
 
         //Create OnPropertyChanged method to raise event
 
-        protected void OnPropertyChanged(string PropertyName)
-
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
 
             if (PropertyChanged != null)
 
-                PropertyChanged(this, new PropertyChangedEventArgs(PropertyName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void APICall(string book, int chapter, int verse)
+        {
 
         }
 
 
-
-
         #endregion
-        public Dictionary<string,string> BooksDict { get; set; }
+        public Dictionary<string, string> BooksDict { get; set; }
         private void CbBook_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+
             var bookStr = cbBook.SelectedItem.ToString();
             var book = BooksDict.FirstOrDefault(x => x.Value == bookStr).Key;
             var str = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/{0}/chapters";
             var URL = string.Format(str, book);
 
+            APICall(URL);
+        }
+
+        private void APICall(string URL)
+        {
             if (!setDefault)
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
@@ -246,10 +277,10 @@ namespace BibleApplication
                         StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
                         var number = int.Parse(reader.ReadToEnd());
                         var numberList = Enumerable.Range(1, number).ToList();
-                       
-                        chapters = numberList;
-                        cbChapter.ItemsSource = chapters;
-                        cbChapter.SelectedItem = chapters.First();
+
+                        Chapters = numberList;
+                        cbChapter.ItemsSource = Chapters;
+                        cbChapter.SelectedItem = Chapters.First();
                     }
                 }
                 catch (WebException ex)
@@ -289,9 +320,9 @@ namespace BibleApplication
                         var number = int.Parse(reader.ReadToEnd());
                         var numberList = Enumerable.Range(1, number).ToList();
 
-                        chapters = numberList;
-                        cbChapter.ItemsSource = chapters;
-                        cbChapter.SelectedItem = chapters.First();
+                        Chapters = numberList;
+                        cbChapter.ItemsSource = Chapters;
+                        cbChapter.SelectedItem = Chapters.First();
                     }
                 }
                 catch (WebException ex)
@@ -309,26 +340,26 @@ namespace BibleApplication
             else
                 setDefault = false;
         }
-    }
+        
+
         private void grdmain_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
             {
-
-
                 //check # of chapters in book
                 //if last chapter get next book
                 //back one chapter
+
             }
-            if(e.Key == Key.Right)
+            if (e.Key == Key.Right)
             {
                 // forward one chapter
             }
-            if(e.Key == Key.Up)
+            if (e.Key == Key.Up)
             {
                 // back one verse
             }
-            if(e.Key == Key.Down)
+            if (e.Key == Key.Down)
             {
                 //forward one verse
             }
@@ -337,6 +368,11 @@ namespace BibleApplication
 
             }
 
+        }
+
+        private void winMain_Loaded(object sender, RoutedEventArgs e)
+        {
+            //winMain.Focus();
         }
     }
     public class Verse
@@ -366,3 +402,4 @@ namespace BibleApplication
         public int number { get; set; }
     }
 }
+

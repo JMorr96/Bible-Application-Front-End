@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BibleApplication"
         mc:Ignorable="d"
-        Title="Bible Application" Height="450" Width="800">
-    <Grid Name="grdmain" KeyDown="grdmain_KeyDown">
+        Name="winMain" Title="Bible Application" Height="450" Width="800" PreviewKeyDown="grdmain_KeyDown" Loaded="winMain_Loaded"
+        Focusable="True" >
+    <Grid Name="grdmain" >
         <Grid.Background>
             <ImageBrush ImageSource="Bible3.jpg" Opacity="0.6"  />
 
