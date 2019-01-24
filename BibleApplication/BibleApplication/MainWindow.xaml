@@ -75,11 +75,11 @@
             <Grid Grid.ColumnSpan="3" Background="#FF3A0303" MaxHeight="120">
                 <StackPanel Orientation="Horizontal" Background="#FF3A0303" Grid.ColumnSpan="3" Height="30" VerticalAlignment="Center"
                     MaxHeight="120" HorizontalAlignment="Center" Margin="5">
-                    <ComboBox Name="cbBook" Text="Book" Width="120" ItemsSource="{Binding Path=Books}"  Loaded="cbBook_Loaded" 
-                              VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True" />
-                    <ComboBox Name="cbChapter" Text="Chapter" Margin="15,0,0,0" Width="70" ItemsSource="{Binding Path=Chapters}"
-                              VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True"/>
-                    <ComboBox Name="cbVerse" Text="Verse" Margin="15,0,0,0" Width="70" ItemsSource="{Binding Path=Verses}" 
+                    <ComboBox Name="cbBook" Text="Book" Width="120"   
+                              VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True" SelectionChanged="CbBook_SelectionChanged" />
+                    <ComboBox Name="cbChapter" Text="Chapter" Margin="15,0,0,0" Width="70" 
+                              VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True" SelectionChanged="CbChapter_SelectionChanged"/>
+                    <ComboBox Name="cbVerse" Text="Verse" Margin="15,0,0,0" Width="70" 
                               VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True"/>
                     <Button Name="btnSearch" Margin="15,0,0,0" Content="Search" Width=" 80" Click="btnSearch_Click"></Button>
                 </StackPanel>
