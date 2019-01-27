@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BibleApplication"
         mc:Ignorable="d"
-        Name="winMain" Title="Bible Application" Height="450" Width="800" PreviewKeyDown="grdmain_KeyDown" Loaded="winMain_Loaded"
+        Name="winMain" Title="Bible Application" Height="1000" Width="1500" PreviewKeyDown="grdmain_KeyDown" Loaded="winMain_Loaded" WindowStartupLocation="CenterScreen"
         Focusable="True" >
     <Grid Name="grdmain" >
         <Grid.Background>
@@ -76,11 +76,15 @@
             <Grid Grid.ColumnSpan="3" Background="#FF3A0303" MaxHeight="120">
                 <StackPanel Orientation="Horizontal" Background="#FF3A0303" Grid.ColumnSpan="3" Height="30" VerticalAlignment="Center"
                     MaxHeight="120" HorizontalAlignment="Center" Margin="5">
-                    <ComboBox Name="cbBook" Text="Book" Width="120"   
-                              VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True" SelectionChanged="CbBook_SelectionChanged" />
-                    <ComboBox Name="cbChapter" Text="Chapter" Margin="15,0,0,0" Width="70" 
+                    <ComboBox Name="cbBook" Text="Book" Width="120"  SelectedItem="{Binding SelectedBook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="name"
+                              ItemsSource="{Binding Books, UpdateSourceTrigger=PropertyChanged}" 
+                              VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True" SelectionChanged="CbBook_SelectionChanged" 
+                              />
+                    <ComboBox Name="cbChapter" Text="Chapter" Margin="15,0,0,0" Width="70" SelectedItem="{Binding SelectedChapter, Mode=TwoWay}"
+                               ItemsSource="{Binding Chapters, UpdateSourceTrigger=PropertyChanged}"
                               VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True" SelectionChanged="CbChapter_SelectionChanged"/>
-                    <ComboBox Name="cbVerse" Text="Verse" Margin="15,0,0,0" Width="70" 
+                    <ComboBox Name="cbVerse" Text="Verse" Margin="15,0,0,0" Width="70" SelectedItem="{Binding SelectedVerse, Mode=TwoWay}"
+                               ItemsSource="{Binding Verses, UpdateSourceTrigger=PropertyChanged}"
                               VerticalContentAlignment="Center" IsEditable="True" IsReadOnly="True"/>
                     <Button Name="btnSearch" Margin="15,0,0,0" Content="Search" Width=" 80" Click="btnSearch_Click"></Button>
                 </StackPanel>
@@ -91,9 +95,9 @@
                     <SolidColorBrush Color="#FF580D0D" Opacity="0.6"/>
                 </Grid.Background>
                 <StackPanel Orientation="Vertical">
-                    <TextBlock x:Name="prev" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Foreground="White" FontSize="30"/>
-                    <TextBlock x:Name="curr" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Foreground="White" FontSize="30"/>
-                    <TextBlock x:Name="next" HorizontalAlignment="Center"  TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Foreground="White" FontSize="30"/>
+                    <TextBlock x:Name="tbPrev" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding CurrentVerseSelection.prev.text}" VerticalAlignment="Top" Foreground="White" FontSize="30"/>
+                    <TextBlock x:Name="tbCurr" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding CurrentVerseSelection.curr.text}" VerticalAlignment="Top" Foreground="White" FontSize="30"/>
+                    <TextBlock x:Name="tbNext" HorizontalAlignment="Center"  TextWrapping="Wrap" Text="{Binding CurrentVerseSelection.next.text}" VerticalAlignment="Top" Foreground="White" FontSize="30"/>
                 </StackPanel>
               
 

@@ -40,19 +40,56 @@ namespace BibleApplication
             //Grab Bible books
             var booksURL = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/books";
             setDefault = false;
-            APICall(booksURL, true, false, false);
+            GetNumberOf(booksURL, true, false, false);
 
 
             //Grab Bible chapters.
             var chaptersURL = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/Ge/chapters";
-            APICall(chaptersURL, false, true, false);
+            GetNumberOf(chaptersURL, false, true, false);
 
             //Grab Bible verses.
             var versesURL = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/Ge/1/verses";
-            APICall(versesURL, false, false, true);
+            GetNumberOf(versesURL, false, false, true);
+            GoTo("Ge", 1, 1);
 
-            
+
+
         }
+        private Book _selectedBook;
+
+        public Book SelectedBook
+        {
+            get { return _selectedBook; }
+            set
+            {
+                _selectedBook = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _selectedChapter;
+
+        public int SelectedChapter
+        {
+            get { return _selectedChapter; }
+            set
+            {
+                _selectedChapter = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _selectedVerse;
+
+        public int SelectedVerse
+        {
+            get { return _selectedVerse; }
+            set
+            {
+                _selectedVerse = value;
+                OnPropertyChanged();
+            }
+        }
+
+
 
         private List<int> _verses;
 
@@ -77,9 +114,9 @@ namespace BibleApplication
             }
         }
 
-        private List<string> _books;
+        private List<Book> _books;
 
-        public List<string> Books
+        public List<Book> Books
         {
             get { return _books; }
             set
@@ -88,6 +125,18 @@ namespace BibleApplication
                 OnPropertyChanged();
             }
         }
+        private Verse _currentVerseSelection;
+
+        public Verse CurrentVerseSelection
+        {
+            get { return _currentVerseSelection; }
+            set
+            {
+                _currentVerseSelection = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         /// <summary>
         /// Sets the textblocks with the requested verses.
@@ -98,31 +147,7 @@ namespace BibleApplication
         {
             // Test URL.
             // TODO: Get the book version, book name, chapter, and verse and then make the call.
-            var URL = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/Ex/40/2";
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-            try
-            {
-                WebResponse response = request.GetResponse();
-                using (Stream responseStream = response.GetResponseStream())
-                {
-                    StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
-                    var test = reader.ReadToEnd();
-                    var result = JsonConvert.DeserializeObject<Verse>(test);
-                    setTextBoxValue(result.prev.text, result.curr.text, result.next.text);
-                }
-            }
-            catch (WebException ex)
-            {
-                WebResponse errorResponse = ex.Response;
-                using (Stream responseStream = errorResponse.GetResponseStream())
-                {
-                    StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
-                    String errorText = reader.ReadToEnd();
-                    // log errorText
-                }
-                throw;
-            }
+            GoTo(SelectedBook.abbrev, SelectedChapter, SelectedVerse);
         }
         /// <summary>
         /// Sets the text of each of the textblocks.
@@ -130,19 +155,55 @@ namespace BibleApplication
         /// <param name="prev">Previous text box.</param>
         /// <param name="curr">Current text box.</param>
         /// <param name="next">Next text box.</param>
-        private void setTextBoxValue(string prevText, string currText, string nextText)
+        private void SetFormat()
         {
+
+            var thingy = BooksDict.FirstOrDefault(t => t.Key == CurrentVerseSelection.curr.book).Value;
+            Book book = new Book();
+            book.abbrev = CurrentVerseSelection.curr.book;
+            book.name = BooksDict.FirstOrDefault(t => t.Key == CurrentVerseSelection.curr.book).Value;
+            //Fix Book Selection in cbBook
+            SelectedBook = book;
+            cbBook.SelectedItem = book;
+            SelectedChapter = CurrentVerseSelection.curr.chapter;
+            SelectedVerse = CurrentVerseSelection.curr.verse;
+            if (CurrentVerseSelection.prev == null)
+            {
+                tbPrev.Text = "There is no verse before this.";
+            }
+            else
+            {
+                tbPrev.Text = CurrentVerseSelection.prev.text;
+            }
+            if (CurrentVerseSelection.curr == null)
+            {
+                tbCurr.Text = "";
+            }
+            else
+            {
+                tbCurr.Text = CurrentVerseSelection.curr.text;
+            }
+            if (CurrentVerseSelection.next == null)
+            {
+                tbNext.Text = "The end.";
+
+            }
+            else
+            {
+                tbNext.Text = CurrentVerseSelection.next.text;
+
+            }
             //If there is no previous verse, it will say. If there is none after then the text block is hidden.
 
-            nextText = null;
-            prev.Text = prevText == "" || prevText == null ? prev.Text = "There is no verse before this." : prev.Text = prevText;
-            curr.Text = currText;
-            
-            next.Text = nextText;
-            if(next.Text == "" || next.Text == null)
-            {
-                next.Visibility = Visibility.Hidden;
-            }
+            //nextText = null;
+            //prev.Text = prevText == "" || prevText == null ? prev.Text = "There is no verse before this." : prev.Text = prevText;
+            //curr.Text = currText;
+
+            //next.Text = nextText;
+            //if (next.Text == "" || next.Text == null)
+            //{
+            //    next.Visibility = Visibility.Hidden;
+            //}
 
         }
         public bool setDefault { get; set; }
@@ -168,139 +229,23 @@ namespace BibleApplication
         #endregion
         public Dictionary<string, string> BooksDict { get; set; }
         private void CbBook_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
 
-            var bookStr = cbBook.SelectedItem.ToString();
-            var book = BooksDict.FirstOrDefault(x => x.Value == bookStr).Key;
+        {
+            string bookabbrev = SelectedBook.abbrev;
             var str = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/{0}/chapters";
-            var URL = string.Format(str, book);
+            var URL = string.Format(str, bookabbrev);
 
-            APICall(URL, false, true, false);
+
+            GetNumberOf(URL, false, true, false);
+
         }
-
-        private void APICall(string URL, bool books, bool chapters, bool verses)
-        {
-            if (!setDefault)
-            {
-                if (books)
-                {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-                    try
-                    {
-                        WebResponse response = request.GetResponse();
-                        using (Stream responseStream = response.GetResponseStream())
-                        {
-                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
-                            var array = reader.ReadToEnd();
-                            var result = JsonConvert.DeserializeObject<dynamic[][]>(array);
-
-                            var list = new List<Book>();
-                            foreach (var item in result)
-                            {
-                                Book temp = new Book();
-                                temp.abbrev = item[0];
-                                temp.name = item[1];
-                                BooksDict.Add(item[0], item[1]);
-                                list.Add(temp);
-                            }
-
-                            Books = list.Select(x => x.name).ToList();
-                            cbBook.ItemsSource = Books;
-                            cbBook.SelectedItem = Books.First();
-                            setDefault = false;
-
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        WebResponse errorResponse = ex.Response;
-                        using (Stream responseStream = errorResponse.GetResponseStream())
-                        {
-                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
-                            String errorText = reader.ReadToEnd();
-                            // log errorText
-                        }
-                        throw;
-                    }
-                }
-
-                else if (chapters)
-                {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-                    try
-                    {
-                        WebResponse response = request.GetResponse();
-                        using (Stream responseStream = response.GetResponseStream())
-                        {
-                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
-                            var number = int.Parse(reader.ReadToEnd());
-                            var numberList = Enumerable.Range(1, number).ToList();
-
-                            Chapters = numberList;
-                            cbChapter.ItemsSource = Chapters;
-                            cbChapter.SelectedItem = Chapters.First();
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        WebResponse errorResponse = ex.Response;
-                        using (Stream responseStream = errorResponse.GetResponseStream())
-                        {
-                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
-                            String errorText = reader.ReadToEnd();
-                            // log errorText
-                        }
-                        throw;
-                    }
-                }
-
-                else if (verses)
-                {
-                    HttpWebRequest request2 = (HttpWebRequest)WebRequest.Create(URL);
-                    try
-                    {
-                        WebResponse response = request2.GetResponse();
-                        using (Stream responseStream = response.GetResponseStream())
-                        {
-                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
-                            var number = int.Parse(reader.ReadToEnd());
-                            var numberList = Enumerable.Range(1, number).ToList();
-
-                            Verses = numberList;
-                            cbVerse.ItemsSource = Verses;
-                            cbVerse.SelectedItem = Verses.First();
-
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        WebResponse errorResponse = ex.Response;
-                        using (Stream responseStream = errorResponse.GetResponseStream())
-                        {
-                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
-                            String errorText = reader.ReadToEnd();
-                            // log errorText
-                        }
-                        throw;
-                    }
-                }
-
-            }
-                
-            else
-                setDefault = false;
-        }
-
         private void CbChapter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            var bookStr = cbBook.SelectedItem.ToString();
-            var book = BooksDict.FirstOrDefault(x => x.Value == bookStr).Key;
-            var chp = cbChapter.SelectedItem.ToString();
             var str = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/{0}/{1}/verses";
-            var URL = string.Format(str, book, chp);
+            var URL = string.Format(str, SelectedBook.abbrev, SelectedChapter);
 
-            APICall(URL, false, false, true);
+            GetNumberOf(URL, false, false, true);
 
             //if (!setDefault)
             //{
@@ -334,7 +279,155 @@ namespace BibleApplication
             //else
             //    setDefault = false;
         }
-        
+
+
+        private void GetNumberOf(string URL, bool books, bool chapters, bool verses)
+        {
+            if (!setDefault)
+            {
+                if (books)
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                    try
+                    {
+                        WebResponse response = request.GetResponse();
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
+                            var array = reader.ReadToEnd();
+                            var result = JsonConvert.DeserializeObject<dynamic[][]>(array);
+
+                            var list = new List<Book>();
+                            foreach (var item in result)
+                            {
+                                Book temp = new Book();
+                                temp.abbrev = item[0];
+                                temp.name = item[1];
+                                BooksDict.Add(item[0], item[1]);
+                                list.Add(temp);
+                            }
+                            Books = list;
+                            //Books = list.Select(x => x.name).ToList();
+                            //cbBook.ItemsSource = Books;
+                            //cbBook.SelectedItem = Books.First();
+                            setDefault = false;
+
+                        }
+                    }
+                    catch (WebException ex)
+                    {
+                        WebResponse errorResponse = ex.Response;
+                        using (Stream responseStream = errorResponse.GetResponseStream())
+                        {
+                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
+                            String errorText = reader.ReadToEnd();
+                            // log errorText
+                        }
+                        throw;
+                    }
+                }
+
+                else if (chapters)
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                    try
+                    {
+                        WebResponse response = request.GetResponse();
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
+                            var number = int.Parse(reader.ReadToEnd());
+                            var numberList = Enumerable.Range(1, number).ToList();
+
+                            Chapters = numberList;
+                            //cbChapter.ItemsSource = Chapters;
+                            //cbChapter.SelectedItem = Chapters.First();
+                        }
+                    }
+                    catch (WebException ex)
+                    {
+                        WebResponse errorResponse = ex.Response;
+                        using (Stream responseStream = errorResponse.GetResponseStream())
+                        {
+                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
+                            String errorText = reader.ReadToEnd();
+                            // log errorText
+                        }
+                        throw;
+                    }
+                }
+
+                else if (verses)
+                {
+                    HttpWebRequest request2 = (HttpWebRequest)WebRequest.Create(URL);
+                    try
+                    {
+                        WebResponse response = request2.GetResponse();
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
+                            var number = int.Parse(reader.ReadToEnd());
+                            Verses = Enumerable.Range(1, number).ToList();
+
+                            //cbVerse.ItemsSource = Verses;
+                            //cbVerse.SelectedItem = Verses.First();
+
+                        }
+                    }
+                    catch (WebException ex)
+                    {
+                        WebResponse errorResponse = ex.Response;
+                        using (Stream responseStream = errorResponse.GetResponseStream())
+                        {
+                            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
+                            String errorText = reader.ReadToEnd();
+                            // log errorText
+                        }
+                        throw;
+                    }
+                }
+
+            }
+
+            else
+                setDefault = false;
+        }
+
+        private void GoTo(string bookAbbrev, int chapter, int verse)
+        {
+            var str = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/{0}/{1}/{2}";
+            var URL = string.Format(str, bookAbbrev, chapter, verse);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+            try
+            {
+                WebResponse response = request.GetResponse();
+                using (Stream responseStream = response.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
+                    var test = reader.ReadToEnd();
+                    CurrentVerseSelection = JsonConvert.DeserializeObject<Verse>(test);
+
+                    SetFormat();
+
+                }
+            }
+
+            catch (WebException ex)
+            {
+                WebResponse errorResponse = ex.Response;
+                using (Stream responseStream = errorResponse.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
+                    String errorText = reader.ReadToEnd();
+                    // log errorText
+                }
+                throw;
+            }
+            SetFormat();
+        }
+
+
 
         private void grdmain_KeyDown(object sender, KeyEventArgs e)
         {
@@ -343,31 +436,59 @@ namespace BibleApplication
                 //check # of chapters in book
                 //if last chapter get next book
                 //back one chapter
-                
+                if (SelectedBook.abbrev == CurrentVerseSelection.prev.book)
+                {
+                    if (Chapters.Contains(CurrentVerseSelection.prev.chapter))
+                    {
+                        GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.prev.chapter, 1);
+                    }
+                }
+
+
 
             }
             if (e.Key == Key.Right)
             {
+                if (SelectedBook.abbrev == CurrentVerseSelection.prev.book)
+                {
+                    if (Chapters.Contains(CurrentVerseSelection.prev.chapter))
+                    {
+                        GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.prev.chapter, 1);
+                    }
+                    else
+                    {
+                        GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.curr.chapter, 1);
+                    }
+                }
+
                 // forward one chapter
+
             }
             if (e.Key == Key.Up)
             {
                 // back one verse
+                if (CurrentVerseSelection.prev == null) return;
+                GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.curr.chapter, CurrentVerseSelection.prev.verse);
+                SelectedChapter = CurrentVerseSelection.curr.chapter;
+                SelectedVerse = CurrentVerseSelection.curr.verse;
+
             }
             if (e.Key == Key.Down)
             {
-                //forward one verse
-            }
-            else
-            {
+                if (CurrentVerseSelection.next == null) return;
+                GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.curr.chapter, CurrentVerseSelection.next.verse);
 
+                SelectedChapter = CurrentVerseSelection.curr.chapter;
+                SelectedVerse = CurrentVerseSelection.curr.verse;
             }
+
+
 
         }
 
         private void winMain_Loaded(object sender, RoutedEventArgs e)
         {
-            //winMain.Focus();
+            winMain.Focus();
         }
     }
     public class Verse
@@ -379,8 +500,8 @@ namespace BibleApplication
     public class VerseDetails
     {
         public string book { get; set; }
-        public string chapter { get; set; }
-        public string verse { get; set; }
+        public int chapter { get; set; }
+        public int verse { get; set; }
         public string text { get; set; }
     }
     public class Book
@@ -388,13 +509,6 @@ namespace BibleApplication
         public string abbrev { get; set; }
         public string name { get; set; }
     }
-    //public class Chapter
-    //{
-    //    public int number { get; set; }
-    //}
-    //public class Verses
-    //{
-    //    public int number { get; set; }
-    //}
+
 }
 
