@@ -35,7 +35,6 @@ namespace BibleApplication
             InitializeComponent();
             setDefault = true;
             this.DataContext = this;
-            BooksDict = new Dictionary<string, string>();
 
             //Grab Bible books
             var booksURL = @"http://profo.pythonanywhere.com/bible/api/v1.0/KJV/books";
@@ -187,17 +186,6 @@ namespace BibleApplication
                 tbNext.Text = CurrentVerseSelection.next.text;
 
             }
-            //If there is no previous verse, it will say. If there is none after then the text block is hidden.
-
-            //nextText = null;
-            //prev.Text = prevText == "" || prevText == null ? prev.Text = "There is no verse before this." : prev.Text = prevText;
-            //curr.Text = currText;
-
-            //next.Text = nextText;
-            //if (next.Text == "" || next.Text == null)
-            //{
-            //    next.Visibility = Visibility.Hidden;
-            //}
 
         }
         public bool setDefault { get; set; }
@@ -221,7 +209,6 @@ namespace BibleApplication
         }
 
         #endregion
-        public Dictionary<string, string> BooksDict { get; set; }
         private void CbBook_SelectionChanged(object sender, SelectionChangedEventArgs e)
 
         {
@@ -240,38 +227,6 @@ namespace BibleApplication
             var URL = string.Format(str, SelectedBook.abbrev, SelectedChapter);
 
             GetNumberOf(URL, false, false, true);
-
-            //if (!setDefault)
-            //{
-            //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-            //    try
-            //    {
-            //        WebResponse response = request.GetResponse();
-            //        using (Stream responseStream = response.GetResponseStream())
-            //        {
-            //            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
-            //            var number = int.Parse(reader.ReadToEnd());
-            //            var numberList = Enumerable.Range(1, number).ToList();
-
-            //            Chapters = numberList;
-            //            cbChapter.ItemsSource = Chapters;
-            //            cbChapter.SelectedItem = Chapters.First();
-            //        }
-            //    }
-            //    catch (WebException ex)
-            //    {
-            //        WebResponse errorResponse = ex.Response;
-            //        using (Stream responseStream = errorResponse.GetResponseStream())
-            //        {
-            //            StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
-            //            String errorText = reader.ReadToEnd();
-            //            // log errorText
-            //        }
-            //        throw;
-            //    }
-            //}
-            //else
-            //    setDefault = false;
         }
 
 
@@ -297,13 +252,9 @@ namespace BibleApplication
                                 Book temp = new Book();
                                 temp.abbrev = item[0];
                                 temp.name = item[1];
-                                BooksDict.Add(item[0], item[1]);
                                 list.Add(temp);
                             }
                             Books = list;
-                            //Books = list.Select(x => x.name).ToList();
-                            //cbBook.ItemsSource = Books;
-                            //cbBook.SelectedItem = Books.First();
                             setDefault = false;
 
                         }
@@ -332,10 +283,7 @@ namespace BibleApplication
                             StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
                             var number = int.Parse(reader.ReadToEnd());
                             var numberList = Enumerable.Range(1, number).ToList();
-
                             Chapters = numberList;
-                            //cbChapter.ItemsSource = Chapters;
-                            //cbChapter.SelectedItem = Chapters.First();
                         }
                     }
                     catch (WebException ex)
@@ -362,10 +310,6 @@ namespace BibleApplication
                             StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
                             var number = int.Parse(reader.ReadToEnd());
                             Verses = Enumerable.Range(1, number).ToList();
-
-                            //cbVerse.ItemsSource = Verses;
-                            //cbVerse.SelectedItem = Verses.First();
-
                         }
                     }
                     catch (WebException ex)
@@ -430,33 +374,39 @@ namespace BibleApplication
                 //check # of chapters in book
                 //if last chapter get next book
                 //back one chapter
-                if (SelectedBook.abbrev == CurrentVerseSelection.prev.book)
+
+                var prevChapter = (CurrentVerseSelection.curr.chapter - 1);
+                if (prevChapter >= 1)
                 {
-                    if (Chapters.Contains(CurrentVerseSelection.prev.chapter))
+                    GoTo(CurrentVerseSelection.curr.book, prevChapter, 1);
+                }
+                else
+                {
+                    var bookIndex = Books.FindIndex(x => x.abbrev == CurrentVerseSelection.curr.book) - 1;
+                    if (bookIndex >= 0)
                     {
-                        GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.prev.chapter, 1);
+                        var prevBook = Books[bookIndex];
+                        GoTo(prevBook.abbrev, 1, 1);
                     }
                 }
-
-
-
             }
             if (e.Key == Key.Right)
             {
-                if (SelectedBook.abbrev == CurrentVerseSelection.prev.book)
+
+                var nextChapter = (CurrentVerseSelection.curr.chapter + 1);
+                if (nextChapter <= Chapters.Count())
                 {
-                    if (Chapters.Contains(CurrentVerseSelection.prev.chapter))
+                    GoTo(CurrentVerseSelection.curr.book, nextChapter, 1);
+                }
+                else
+                {
+                    var bookIndex = Books.FindIndex(x => x.abbrev == CurrentVerseSelection.curr.book) + 1;
+                    if (bookIndex <= Books.Count())
                     {
-                        GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.prev.chapter, 1);
-                    }
-                    else
-                    {
-                        GoTo(CurrentVerseSelection.curr.book, CurrentVerseSelection.curr.chapter, 1);
+                        var nextBook = Books[bookIndex];
+                        GoTo(nextBook.abbrev, 1, 1);
                     }
                 }
-
-                // forward one chapter
-
             }
             if (e.Key == Key.Up)
             {
@@ -475,9 +425,6 @@ namespace BibleApplication
                 SelectedChapter = CurrentVerseSelection.curr.chapter;
                 SelectedVerse = CurrentVerseSelection.curr.verse;
             }
-
-
-
         }
 
         private void winMain_Loaded(object sender, RoutedEventArgs e)

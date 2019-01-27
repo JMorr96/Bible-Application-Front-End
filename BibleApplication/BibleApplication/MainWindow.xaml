@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BibleApplication"
         mc:Ignorable="d"
-        Name="winMain" Title="Bible Application" Height="1000" Width="1500" PreviewKeyDown="grdmain_KeyDown" Loaded="winMain_Loaded" WindowStartupLocation="CenterScreen"
+        Name="winMain" Title="Bible Application" Height="800" Width="1000" PreviewKeyDown="grdmain_KeyDown" Loaded="winMain_Loaded" WindowStartupLocation="CenterScreen"
         Focusable="True" >
     <Grid Name="grdmain" >
         <Grid.Background>
