@@ -158,13 +158,7 @@ namespace BibleApplication
         private void SetFormat()
         {
 
-            var thingy = BooksDict.FirstOrDefault(t => t.Key == CurrentVerseSelection.curr.book).Value;
-            Book book = new Book();
-            book.abbrev = CurrentVerseSelection.curr.book;
-            book.name = BooksDict.FirstOrDefault(t => t.Key == CurrentVerseSelection.curr.book).Value;
-            //Fix Book Selection in cbBook
-            SelectedBook = book;
-            cbBook.SelectedItem = book;
+            SelectedBook = Books.FirstOrDefault(x => x.abbrev == CurrentVerseSelection.curr.book);
             SelectedChapter = CurrentVerseSelection.curr.chapter;
             SelectedVerse = CurrentVerseSelection.curr.verse;
             if (CurrentVerseSelection.prev == null)
